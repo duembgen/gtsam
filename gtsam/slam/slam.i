@@ -26,6 +26,21 @@ virtual class BetweenFactor : gtsam::NoiseModelFactor {
   void pickle() const;
 };
 
+#include <gtsam/slam/OrientedPlane3Factor.h>
+virtual class OrientedPlane3Factor : gtsam::NoiseModelFactor {
+  OrientedPlane3Factor(const Vector& z, const gtsam::noiseModel::Gaussian* noiseModel, 
+                       size_t poseKey, size_t landmarkKey);
+
+  OrientedPlane3 measured() const; 
+
+  // enable serialization functionality
+  void serialize() const; 
+  // enable pickling in python
+  void pickle() const; 
+};
+
+
+
 #include <gtsam/slam/ProjectionFactor.h>
 template <POSE, LANDMARK, CALIBRATION>
 virtual class GenericProjectionFactor : gtsam::NoiseModelFactor {

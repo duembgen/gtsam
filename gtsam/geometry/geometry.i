@@ -1029,4 +1029,32 @@ class BearingRange {
 typedef gtsam::BearingRange<gtsam::Pose2, gtsam::Point2, gtsam::Rot2, double>
     BearingRange2D;
 
+#include <gtsam/geometry/OrientedPlane3.h>
+class OrientedPlane3 {
+  /// Standard constructors
+  OrientedPlane3();
+  OrientedPlane3(const gtsam::Unit3& n, double d);
+  OrientedPlane3(const Vector& vec);
+  OrientedPlane3(double a, double b, double c, double d);
+
+  /// Testable
+  void print(string s = "") const;
+  bool equals(const gtsam::OrientedPlane3& s, double tol) const; 
+
+  // Manifold 
+  static size_t Dim(); 
+  size_t dim() const; 
+  gtsam::OrientedPlane3 retract(Vector v) const; 
+                         //OptionalJacobian<3, 3> H = boost::none) const;
+  Vector localCoordinates(const gtsam::OrientedPlane3& s) const;
+
+  /// Returns the plane coefficients
+  Vector planeCoefficients();
+
+  /// Return the normal
+  gtsam::Unit3 normal() const;
+  /// Return the perpendicular distance to the origin
+  double distance() const;
+};
+
 }  // namespace gtsam

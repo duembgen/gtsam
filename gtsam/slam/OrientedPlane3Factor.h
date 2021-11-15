@@ -22,8 +22,7 @@ class OrientedPlane3Factor: public NoiseModelFactor2<Pose3, OrientedPlane3> {
 
  public:
   /// Constructor
-  OrientedPlane3Factor() {
-  }
+  OrientedPlane3Factor() {}
   ~OrientedPlane3Factor() override {}
 
   /** Constructor with measured plane (a,b,c,d) coefficients
@@ -46,6 +45,12 @@ class OrientedPlane3Factor: public NoiseModelFactor2<Pose3, OrientedPlane3> {
       const Pose3& pose, const OrientedPlane3& plane,
       boost::optional<Matrix&> H1 = boost::none,
       boost::optional<Matrix&> H2 = boost::none) const override;
+
+
+  const OrientedPlane3& measured() const {
+      return measured_p_;
+  }
+
 };
 
 // TODO: Convert this factor to dimension two, three dimensions is redundant for direction prior
