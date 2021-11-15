@@ -19,10 +19,9 @@ int main(int argc, char** argv){
   using PlaneFactor = gtsam::OrientedPlane3Factor;
 
   // Setup graph & object
-  FastMap<char, Vector> thresholds;
-  thresholds['x'] = (Vector(6) << 0.05, 0.05, 0.05, 0.03, 0.03, 0.03).finished();
-  thresholds['p'] = Vector3{0.03, 0.03, 0.1};
-
+  //FastMap<char, Vector> thresholds;
+  //thresholds['x'] = (Vector(6) << 0.05, 0.05, 0.05, 0.03, 0.03, 0.03).finished();
+  //thresholds['p'] = Vector3{0.03, 0.03, 0.1};
   //ISAM2Params isam2params;
   //isam2params.setRelinearizeThreshold(thresholds);
   //isam2params.setRelinearizeSkip(3);
@@ -32,7 +31,6 @@ int main(int argc, char** argv){
 
   NonlinearFactorGraph graph;
   Values initialEstimate;
-  map<gtsam::Key, double> timestampMap;
 
   // Initial values
   Plane p849(0.211098835, 0.214292752, 0.95368543, 26.4269514);

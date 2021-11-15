@@ -135,6 +135,14 @@ public:
   }
 
   /// @}
+ private:
+  /** Serialization function */
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int /*version*/) {
+    ar & BOOST_SERIALIZATION_NVP(n_);
+    ar & BOOST_SERIALIZATION_NVP(d_);
+  }
 };
 
 template<> struct traits<OrientedPlane3> : public internal::Manifold<

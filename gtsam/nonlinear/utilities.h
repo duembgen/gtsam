@@ -27,6 +27,7 @@
 #include <gtsam/geometry/Point3.h>
 #include <gtsam/geometry/Pose2.h>
 #include <gtsam/geometry/Pose3.h>
+#include <gtsam/geometry/OrientedPlane3.h>
 #include <gtsam/geometry/Cal3_S2.h>
 #include <gtsam/geometry/PinholeCamera.h>
 
@@ -127,7 +128,7 @@ Matrix extractPoint3(const Values& values) {
   return result;
 }
 
-/// Extract all Pose3 values
+/// Extract all Pose2 values
 Values allPose2s(const Values& values) {
   return values.filter<Pose2>();
 }
@@ -157,6 +158,26 @@ Matrix extractPose3(const Values& values) {
     result.row(j).segment(3, 3) << key_value.value.rotation().matrix().row(1);
     result.row(j).segment(6, 3) << key_value.value.rotation().matrix().row(2);
     result.row(j).tail(3) = key_value.value.translation();
+    j++;
+  }
+  return result;
+}
+
+/// Extract all OrientedPlane3 values
+Values allOrientedPlane3s(const Values& values) {
+  return values.filter<OrientedPlane3>();
+}
+
+/// Extract all OrientedPlane3 values into a single matrix [n0 n1 n2 d]
+Matrix extractOrientedPlane3(const Values& values) {
+  Values::ConstFiltered<OrientedPlane3> planes = values.filter<OrientedPlane3>();
+  Matrix result(planes.size(), 4);
+  size_t j = 0;
+  for(const auto& key_value: planes) {
+    result(j, 0) = key_value.value.normal().point3()[0];
+    result(j, 1) = key_value.value.normal().point3()[1];
+    result(j, 2) = key_value.value.normal().point3()[2];
+    result(j, 3) = key_value.value.distance();
     j++;
   }
   return result;
@@ -312,5 +333,5 @@ Values localToWorld(const Values& local, const Pose2& base,
 
 } // namespace utilities
 
-}
+} // namespace gtsam
 
