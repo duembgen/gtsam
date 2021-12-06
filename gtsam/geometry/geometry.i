@@ -1053,8 +1053,6 @@ class OrientedPlane3 {
 
   /// Transform
   gtsam::OrientedPlane3 transform(const gtsam::Pose3& t) const;
-  gtsam::OrientedPlane3 transformTo(const gtsam::Pose3& t) const;
-  gtsam::OrientedPlane3 transformFrom(const gtsam::Pose3& t) const;
   
   /// Return the normal
   gtsam::Unit3 normal() const;

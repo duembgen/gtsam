@@ -57,29 +57,6 @@ OrientedPlane3 OrientedPlane3::transform(const Pose3& xr,
 }
 
 /* ************************************************************************* */
-OrientedPlane3 OrientedPlane3::transformFrom(const Pose3& wTr,
-                                         OptionalJacobian<3, 3> Hp,
-                                         OptionalJacobian<3, 6> Hr) const {
-  //Matrix23 D_rotated_plane;
-  //Matrix22 D_rotated_pose;
-  //Unit3 n_rotated = xr.rotation().unrotate(n_, D_rotated_plane, D_rotated_pose);
-  //Vector3 unit_vec = n_rotated.unitVector();
-  //double pred_d = n_.unitVector().dot(xr.translation()) + d_;
-  Vector3 w_n = (wTr.rotation().rotate(n_)).unitVector(); 
-  double w_d = d_ + wTr.translation().dot(w_n); 
-  return OrientedPlane3(w_n[0], w_n[1], w_n[2], w_d);
-}
-
-OrientedPlane3 OrientedPlane3::transformTo(const Pose3& wTr,
-                                         OptionalJacobian<3, 3> Hp,
-                                         OptionalJacobian<3, 6> Hr) const {
-  Vector3 w_n = (wTr.rotation().inverse().rotate(n_)).unitVector(); 
-  double w_d = d_ - wTr.translation().dot(w_n); 
-  return OrientedPlane3(w_n[0], w_n[1], w_n[2], w_d);
-}
-
-
-/* ************************************************************************* */
 Vector3 OrientedPlane3::errorVector(const OrientedPlane3& other,
                                     OptionalJacobian<3, 3> H1,
                                     OptionalJacobian<3, 3> H2) const {

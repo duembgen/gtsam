@@ -80,6 +80,7 @@ public:
 
   /// @}
 
+  //TODO(FD) rename below to transfromFrom
   /** Transforms a plane to the specified pose
    * @param xr a transformation in current coordiante
    * @param Hp optional Jacobian wrpt the destination plane
@@ -87,26 +88,6 @@ public:
    * @return the transformed plane
    */
   OrientedPlane3 transform(const Pose3& xr,
-                           OptionalJacobian<3, 3> Hp = boost::none,
-                           OptionalJacobian<3, 6> Hr = boost::none) const;
-
-  /** Transforms a plane to the specified pose
-   * @param wTc pose of local frame in world frame (plane parametrized in local frame)
-   * @param Hp optional Jacobian wrpt the destination plane
-   * @param Hr optional jacobian wrpt the pose transformation
-   * @return representation of plane in world coordinates
-   */
-  OrientedPlane3 transformFrom(const Pose3& wTc,
-                           OptionalJacobian<3, 3> Hp = boost::none,
-                           OptionalJacobian<3, 6> Hr = boost::none) const;
-
-  /** Transforms a plane to the specified pose
-   * @param wTc pose of local frame in world frame (plane parametrized in world frame)
-   * @param Hp optional Jacobian wrpt the destination plane
-   * @param Hr optional jacobian wrpt the pose transformation
-   * @return representation of plane in local coordinates
-   */
-  OrientedPlane3 transformTo(const Pose3& wTc,
                            OptionalJacobian<3, 3> Hp = boost::none,
                            OptionalJacobian<3, 6> Hr = boost::none) const;
 
