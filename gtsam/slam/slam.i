@@ -33,6 +33,8 @@ virtual class OrientedPlane3Factor : gtsam::NoiseModelFactor {
 
   OrientedPlane3 measured() const; 
 
+  OrientedPlane3Factor clone() const; 
+
   // enable serialization functionality
   void serialize() const; 
   // enable pickling in python

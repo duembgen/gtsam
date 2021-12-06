@@ -18,7 +18,9 @@ namespace gtsam {
 class OrientedPlane3Factor: public NoiseModelFactor2<Pose3, OrientedPlane3> {
  protected:
   OrientedPlane3 measured_p_;
+
   typedef NoiseModelFactor2<Pose3, OrientedPlane3> Base;
+  typedef OrientedPlane3Factor This; 
 
  public:
   /// Constructor
@@ -35,6 +37,11 @@ class OrientedPlane3Factor: public NoiseModelFactor2<Pose3, OrientedPlane3> {
   OrientedPlane3Factor(const Vector4& z, const SharedGaussian& noiseModel,
                        Key poseKey, Key landmarkKey)
       : Base(noiseModel, poseKey, landmarkKey), measured_p_(z) {}
+
+  /// @return a deep copy of this factor
+  gtsam::NonlinearFactor::shared_ptr clone() const override {
+    return boost::static_pointer_cast<gtsam::NonlinearFactor>(
+        gtsam::NonlinearFactor::shared_ptr(new This(*this))); }
 
   /// print
   void print(const std::string& s = "OrientedPlane3Factor",
