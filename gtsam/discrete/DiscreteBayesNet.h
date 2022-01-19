@@ -13,16 +13,21 @@
  * @file DiscreteBayesNet.h
  * @date Feb 15, 2011
  * @author Duy-Nguyen Ta
+ * @author Frank dellaert
  */
 
 #pragma once
 
-#include <vector>
-#include <map>
-#include <boost/shared_ptr.hpp>
+#include <gtsam/discrete/DiscreteConditional.h>
+#include <gtsam/discrete/DiscreteDistribution.h>
 #include <gtsam/inference/BayesNet.h>
 #include <gtsam/inference/FactorGraph.h>
-#include <gtsam/discrete/DiscreteConditional.h>
+
+#include <boost/shared_ptr.hpp>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace gtsam {
 
@@ -71,26 +76,51 @@ namespace gtsam {
     /// @name Standard Interface
     /// @{
 
+    // Add inherited versions of add.
+    using Base::add;
+
+    /** Add a DiscreteDistribution using a table or a string */
+    void add(const DiscreteKey& key, const std::string& spec) {
+      emplace_shared<DiscreteDistribution>(key, spec);
+    }
+
     /** Add a DiscreteCondtional */
-    void add(const Signature& s);
+    template <typename... Args>
+    void add(Args&&... args) {
+      emplace_shared<DiscreteConditional>(std::forward<Args>(args)...);
+    }
+        
+    //** evaluate for given DiscreteValues */
+    double evaluate(const DiscreteValues & values) const;
 
-//    /** Add a DiscreteCondtional in front, when listing parents first*/
-//    GTSAM_EXPORT void add_front(const Signature& s);
-
-    //** evaluate for given Values */
-    double evaluate(const DiscreteConditional::Values & values) const;
+    //** (Preferred) sugar for the above for given DiscreteValues */
+    double operator()(const DiscreteValues & values) const {
+      return evaluate(values);
+    }
 
     /**
     * Solve the DiscreteBayesNet by back-substitution
     */
-    DiscreteFactor::sharedValues optimize() const;
+    DiscreteValues optimize() const;
 
     /** Do ancestral sampling */
-    DiscreteFactor::sharedValues sample() const;
+    DiscreteValues sample() const;
 
     ///@}
+    /// @name Wrapper support
+    /// @{
 
-  private:
+    /// Render as markdown tables.
+    std::string markdown(const KeyFormatter& keyFormatter = DefaultKeyFormatter,
+                         const DiscreteFactor::Names& names = {}) const;
+
+    /// Render as html tables.
+    std::string html(const KeyFormatter& keyFormatter = DefaultKeyFormatter,
+                     const DiscreteFactor::Names& names = {}) const;
+
+    /// @}
+
+ private:
     /** Serialization function */
     friend class boost::serialization::access;
     template<class ARCHIVE>

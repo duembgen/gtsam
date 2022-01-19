@@ -16,15 +16,17 @@
  *  @author Frank Dellaert
  */
 
-//#define ENABLE_TIMING
-#include <gtsam/discrete/DiscreteFactorGraph.h>
-#include <gtsam/discrete/DiscreteConditional.h>
 #include <gtsam/discrete/DiscreteBayesTree.h>
+#include <gtsam/discrete/DiscreteConditional.h>
 #include <gtsam/discrete/DiscreteEliminationTree.h>
+#include <gtsam/discrete/DiscreteFactorGraph.h>
 #include <gtsam/discrete/DiscreteJunctionTree.h>
-#include <gtsam/inference/FactorGraph-inst.h>
 #include <gtsam/inference/EliminateableFactorGraph-inst.h>
-#include <boost/make_shared.hpp>
+#include <gtsam/inference/FactorGraph-inst.h>
+
+using std::vector;
+using std::string;
+using std::map;
 
 namespace gtsam {
 
@@ -56,7 +58,7 @@ namespace gtsam {
 
   /* ************************************************************************* */
   double DiscreteFactorGraph::operator()(
-      const DiscreteFactor::Values &values) const {
+      const DiscreteValues &values) const {
     double product = 1.0;
     for( const sharedFactor& factor: factors_ )
       product *= (*factor)(values);
@@ -64,7 +66,7 @@ namespace gtsam {
   }
 
   /* ************************************************************************* */
-  void DiscreteFactorGraph::print(const std::string& s,
+  void DiscreteFactorGraph::print(const string& s,
       const KeyFormatter& formatter) const {
     std::cout << s << std::endl;
     std::cout << "size: " << size() << std::endl;
@@ -94,7 +96,7 @@ namespace gtsam {
 //  }
 
   /* ************************************************************************* */
-  DiscreteFactor::sharedValues DiscreteFactorGraph::optimize() const
+  DiscreteValues DiscreteFactorGraph::optimize() const
   {
     gttic(DiscreteFactorGraph_optimize);
     return BaseEliminateable::eliminateSequential()->optimize();
@@ -129,6 +131,32 @@ namespace gtsam {
     return std::make_pair(cond, sum);
   }
 
-/* ************************************************************************* */
-} // namespace
+  /* ************************************************************************ */
+  string DiscreteFactorGraph::markdown(
+      const KeyFormatter& keyFormatter,
+      const DiscreteFactor::Names& names) const {
+    using std::endl;
+    std::stringstream ss;
+    ss << "`DiscreteFactorGraph` of size " << size() << endl << endl;
+    for (size_t i = 0; i < factors_.size(); i++) {
+      ss << "factor " << i << ":\n";
+      ss << factors_[i]->markdown(keyFormatter, names) << endl;
+    }
+    return ss.str();
+  }
 
+  /* ************************************************************************ */
+  string DiscreteFactorGraph::html(const KeyFormatter& keyFormatter,
+                                   const DiscreteFactor::Names& names) const {
+    using std::endl;
+    std::stringstream ss;
+    ss << "<div><p><tt>DiscreteFactorGraph</tt> of size " << size() << "</p>";
+    for (size_t i = 0; i < factors_.size(); i++) {
+      ss << "<p>factor " << i << ":</p>";
+      ss << factors_[i]->html(keyFormatter, names) << endl;
+    }
+    return ss.str();
+  }
+
+  /* ************************************************************************ */
+  }  // namespace gtsam

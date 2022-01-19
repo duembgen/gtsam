@@ -255,9 +255,6 @@ class VectorValues {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 };
 
 #include <gtsam/linear/GaussianFactor.h>
@@ -302,6 +299,7 @@ virtual class JacobianFactor : gtsam::GaussianFactor {
   void print(string s = "", const gtsam::KeyFormatter& keyFormatter =
                                 gtsam::DefaultKeyFormatter) const;
   void printKeys(string s) const;
+  gtsam::KeyVector& keys() const;
   bool equals(const gtsam::GaussianFactor& lf, double tol) const;
   size_t size() const;
   Vector unweighted_error(const gtsam::VectorValues& c) const;
@@ -328,9 +326,6 @@ virtual class JacobianFactor : gtsam::GaussianFactor {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 };
 
 #include <gtsam/linear/HessianFactor.h>
@@ -363,9 +358,6 @@ virtual class HessianFactor : gtsam::GaussianFactor {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 };
 
 #include <gtsam/linear/GaussianFactorGraph.h>
@@ -447,9 +439,6 @@ class GaussianFactorGraph {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 };
 
 #include <gtsam/linear/GaussianConditional.h>
@@ -478,7 +467,6 @@ virtual class GaussianConditional : gtsam::JacobianFactor {
     gtsam::VectorValues solveOtherRHS(const gtsam::VectorValues& parents,
                                       const gtsam::VectorValues& rhs) const;
     void solveTransposeInPlace(gtsam::VectorValues& gy) const;
-    void scaleFrontalsBySigma(gtsam::VectorValues& gy) const;
     Matrix R() const;
     Matrix S() const;
     Vector d() const;
@@ -514,9 +502,9 @@ virtual class GaussianBayesNet {
   size_t size() const;
 
   // FactorGraph derived interface
-  // size_t size() const;
   gtsam::GaussianConditional* at(size_t idx) const;
   gtsam::KeySet keys() const;
+  gtsam::KeyVector keyVector() const;
   bool exists(size_t idx) const;
 
   void saveGraph(const string& s) const;

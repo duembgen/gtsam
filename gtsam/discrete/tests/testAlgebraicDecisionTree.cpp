@@ -18,6 +18,7 @@
 
 #include <gtsam/base/Testable.h>
 #include <gtsam/discrete/DiscreteKey.h> // make sure we have traits
+#include <gtsam/discrete/DiscreteValues.h>
 // headers first to make sure no missing headers
 //#define DT_NO_PRUNING
 #include <gtsam/discrete/AlgebraicDecisionTree.h>
@@ -135,8 +136,8 @@ ADT create(const Signature& signature) {
   ADT p(signature.discreteKeys(), signature.cpt());
   static size_t count = 0;
   const DiscreteKey& key = signature.key();
-  string dotfile = (boost::format("CPT-%03d-%d") % ++count % key.first).str();
-  dot(p, dotfile);
+  string DOTfile = (boost::format("CPT-%03d-%d") % ++count % key.first).str();
+  dot(p, DOTfile);
   return p;
 }
 
@@ -413,13 +414,13 @@ TEST(ADT, equality_noparser)
   // Check straight equality
   ADT pA1 = create(A % tableA);
   ADT pA2 = create(A % tableA);
-  EXPECT(pA1 == pA2); // should be equal
+  EXPECT(pA1.equals(pA2)); // should be equal
 
   // Check equality after apply
   ADT pB = create(B % tableB);
   ADT pAB1 = apply(pA1, pB, &mul);
   ADT pAB2 = apply(pB, pA1, &mul);
-  EXPECT(pAB2 == pAB1);
+  EXPECT(pAB2.equals(pAB1));
 }
 
 /* ************************************************************************* */
@@ -430,13 +431,13 @@ TEST(ADT, equality_parser)
   // Check straight equality
   ADT pA1 = create(A % "80/20");
   ADT pA2 = create(A % "80/20");
-  EXPECT(pA1 == pA2); // should be equal
+  EXPECT(pA1.equals(pA2)); // should be equal
 
   // Check equality after apply
   ADT pB = create(B % "60/40");
   ADT pAB1 = apply(pA1, pB, &mul);
   ADT pAB2 = apply(pB, pA1, &mul);
-  EXPECT(pAB2 == pAB1);
+  EXPECT(pAB2.equals(pAB1));
 }
 
 /* ******************************************************************************** */
@@ -445,7 +446,7 @@ TEST(ADT, equality_parser)
 TEST(ADT, constructor)
 {
   DiscreteKey v0(0,2), v1(1,3);
-  Assignment<Key> x00, x01, x02, x10, x11, x12;
+  DiscreteValues x00, x01, x02, x10, x11, x12;
   x00[0] = 0, x00[1] = 0;
   x01[0] = 0, x01[1] = 1;
   x02[0] = 0, x02[1] = 2;
@@ -475,7 +476,7 @@ TEST(ADT, constructor)
   for(double& t: table)
   t = x++;
   ADT f3(z0 & z1 & z2 & z3, table);
-  Assignment<Key> assignment;
+  DiscreteValues assignment;
   assignment[0] = 0;
   assignment[1] = 0;
   assignment[2] = 0;
@@ -501,7 +502,7 @@ TEST(ADT, conversion)
   //  f2.print("f2");
   dot(fIndexKey, "conversion-f2");
 
-  Assignment<Key> x00, x01, x02, x10, x11, x12;
+  DiscreteValues x00, x01, x02, x10, x11, x12;
   x00[5] = 0, x00[2] = 0;
   x01[5] = 0, x01[2] = 1;
   x10[5] = 1, x10[2] = 0;
@@ -577,7 +578,7 @@ TEST(ADT, zero)
   ADT notb(B, 1, 0);
   ADT anotb = a * notb;
   //  GTSAM_PRINT(anotb);
-  Assignment<Key> x00, x01, x10, x11;
+  DiscreteValues x00, x01, x10, x11;
   x00[0] = 0, x00[1] = 0;
   x01[0] = 0, x01[1] = 1;
   x10[0] = 1, x10[1] = 0;

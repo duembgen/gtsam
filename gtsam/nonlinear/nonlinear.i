@@ -132,9 +132,6 @@ class Ordering {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 };
 
 #include <gtsam/nonlinear/NonlinearFactorGraph.h>
@@ -198,10 +195,12 @@ class NonlinearFactorGraph {
   // enabling serialization functionality
   void serialize() const;
 
-  // enable pickling in python
-  void pickle() const;
-
-  void saveGraph(const string& s) const;
+  string dot(
+      const gtsam::Values& values,
+      const gtsam::KeyFormatter& keyFormatter = gtsam::DefaultKeyFormatter);
+  void saveGraph(const string& s, const gtsam::Values& values,
+                 const gtsam::KeyFormatter& keyFormatter =
+                     gtsam::DefaultKeyFormatter) const;
 };
 
 #include <gtsam/nonlinear/NonlinearFactor.h>
@@ -277,6 +276,7 @@ class Values {
 
   void insert(const gtsam::Values& values);
   void update(const gtsam::Values& values);
+  void insert_or_assign(const gtsam::Values& values);
   void erase(size_t j);
   void swap(gtsam::Values& values);
 
@@ -290,9 +290,6 @@ class Values {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 
   // New in 4.0, we have to specialize every insert/update/at to generate
   // wrappers Instead of the old: void insert(size_t j, const gtsam::Value&
@@ -354,6 +351,32 @@ class Values {
   void update(size_t j, Vector vector);
   void update(size_t j, Matrix matrix);
   void update(size_t j, double c);
+
+  void insert_or_assign(size_t j, const gtsam::Point2& point2);
+  void insert_or_assign(size_t j, const gtsam::Point3& point3);
+  void insert_or_assign(size_t j, const gtsam::Rot2& rot2);
+  void insert_or_assign(size_t j, const gtsam::Pose2& pose2);
+  void insert_or_assign(size_t j, const gtsam::SO3& R);
+  void insert_or_assign(size_t j, const gtsam::SO4& Q);
+  void insert_or_assign(size_t j, const gtsam::SOn& P);
+  void insert_or_assign(size_t j, const gtsam::Rot3& rot3);
+  void insert_or_assign(size_t j, const gtsam::Pose3& pose3);
+  void insert_or_assign(size_t j, const gtsam::Unit3& unit3);
+  void insert_or_assign(size_t j, const gtsam::Cal3_S2& cal3_s2);
+  void insert_or_assign(size_t j, const gtsam::Cal3DS2& cal3ds2);
+  void insert_or_assign(size_t j, const gtsam::Cal3Bundler& cal3bundler);
+  void insert_or_assign(size_t j, const gtsam::Cal3Fisheye& cal3fisheye);
+  void insert_or_assign(size_t j, const gtsam::Cal3Unified& cal3unified);
+  void insert_or_assign(size_t j, const gtsam::EssentialMatrix& essential_matrix);
+  void insert_or_assign(size_t j, const gtsam::PinholeCamera<gtsam::Cal3_S2>& camera);
+  void insert_or_assign(size_t j, const gtsam::PinholeCamera<gtsam::Cal3Bundler>& camera);
+  void insert_or_assign(size_t j, const gtsam::PinholeCamera<gtsam::Cal3Fisheye>& camera);
+  void insert_or_assign(size_t j, const gtsam::PinholeCamera<gtsam::Cal3Unified>& camera);
+  void insert_or_assign(size_t j, const gtsam::imuBias::ConstantBias& constant_bias);
+  void insert_or_assign(size_t j, const gtsam::NavState& nav_state);
+  void insert_or_assign(size_t j, Vector vector);
+  void insert_or_assign(size_t j, Matrix matrix);
+  void insert_or_assign(size_t j, double c);
 
   template <T = {gtsam::Point2,
                  gtsam::Point3,
@@ -743,7 +766,12 @@ class ISAM2 {
                             const gtsam::KeyList& extraReelimKeys,
                             bool force_relinearize);
 
+  gtsam::ISAM2Result update(const gtsam::NonlinearFactorGraph& newFactors,
+                            const gtsam::Values& newTheta,
+                            const gtsam::ISAM2UpdateParams& updateParams);
+
   gtsam::Values getLinearizationPoint() const;
+  bool valueExists(gtsam::Key key) const;
   gtsam::Values calculateEstimate() const;
   template <VALUE = {gtsam::Point2, gtsam::Rot2, gtsam::Pose2, gtsam::Point3,
                      gtsam::Rot3, gtsam::Pose3, gtsam::Cal3_S2, gtsam::Cal3DS2,
@@ -753,12 +781,23 @@ class ISAM2 {
                      gtsam::PinholeCamera<gtsam::Cal3Fisheye>,
                      gtsam::PinholeCamera<gtsam::Cal3Unified>, Vector, Matrix}>
   VALUE calculateEstimate(size_t key) const;
-  gtsam::Values calculateBestEstimate() const;
   Matrix marginalCovariance(size_t key) const;
+  gtsam::Values calculateBestEstimate() const;
   gtsam::VectorValues getDelta() const;
+  double error(const gtsam::VectorValues& x) const;
   gtsam::NonlinearFactorGraph getFactorsUnsafe() const;
   gtsam::VariableIndex getVariableIndex() const;
+  const gtsam::KeySet& getFixedVariables() const;
   gtsam::ISAM2Params params() const;
+
+  void printStats() const;
+  gtsam::VectorValues gradientAtZero() const;
+
+  string dot(const gtsam::KeyFormatter& keyFormatter =
+                 gtsam::DefaultKeyFormatter) const;
+  void saveGraph(string s,
+                const gtsam::KeyFormatter& keyFormatter =
+                 gtsam::DefaultKeyFormatter) const;
 };
 
 #include <gtsam/nonlinear/NonlinearISAM.h>
@@ -820,9 +859,6 @@ virtual class PriorFactor : gtsam::NoiseModelFactor {
 
   // enabling serialization functionality
   void serialize() const;
-
-  // enable pickling in python
-  void pickle() const;
 };
 
 #include <gtsam/nonlinear/NonlinearEquality.h>

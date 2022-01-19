@@ -19,9 +19,10 @@
 
 #include <gtsam/discrete/DiscreteFactor.h>
 
+#include <sstream>
+
 using namespace std;
 
 namespace gtsam {
 
-/* ************************************************************************* */
-} // namespace gtsam
+}  // namespace gtsam

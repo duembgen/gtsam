@@ -33,8 +33,6 @@ add_custom_target(gtsam_unstable_header DEPENDS "${PROJECT_SOURCE_DIR}/gtsam_uns
 set(ignore
     gtsam::Point2
     gtsam::Point3
-    gtsam::LieVector
-    gtsam::LieMatrix
     gtsam::ISAM2ThresholdMapValue
     gtsam::FactorIndices
     gtsam::FactorIndexSet
@@ -49,11 +47,13 @@ set(ignore
     gtsam::Pose3Vector
     gtsam::KeyVector
     gtsam::BinaryMeasurementsUnit3
+    gtsam::DiscreteKey
     gtsam::KeyPairDoubleMap)
 
 set(interface_headers
     ${PROJECT_SOURCE_DIR}/gtsam/gtsam.i
     ${PROJECT_SOURCE_DIR}/gtsam/base/base.i
+    ${PROJECT_SOURCE_DIR}/gtsam/discrete/discrete.i
     ${PROJECT_SOURCE_DIR}/gtsam/geometry/geometry.i
     ${PROJECT_SOURCE_DIR}/gtsam/linear/linear.i
     ${PROJECT_SOURCE_DIR}/gtsam/nonlinear/nonlinear.i
@@ -114,8 +114,6 @@ if(GTSAM_UNSTABLE_BUILD_PYTHON)
     set(ignore
             gtsam::Point2
             gtsam::Point3
-            gtsam::LieVector
-            gtsam::LieMatrix
             gtsam::ISAM2ThresholdMapValue
             gtsam::FactorIndices
             gtsam::FactorIndexSet
