@@ -1044,8 +1044,6 @@ class OrientedPlane3 {
   // Manifold 
   static size_t Dim(); 
   size_t dim() const; 
-  //gtsam::OrientedPlane3 retract(Vector v) const; 
-                         //OptionalJacobian<3, 3> H = boost::none) const;
   Vector localCoordinates(const gtsam::OrientedPlane3& s) const;
 
   /// Returns the plane coefficients
@@ -1056,8 +1054,11 @@ class OrientedPlane3 {
   
   /// Return the normal
   gtsam::Unit3 normal() const;
+
   /// Return the perpendicular distance to the origin
   double distance() const;
-};
 
+  /// Returns the error between this and other plane. 
+  Vector errorVector(gtsam::OrientedPlane3& other);
+};
 }  // namespace gtsam
